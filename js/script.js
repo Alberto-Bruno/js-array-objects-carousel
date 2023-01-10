@@ -70,13 +70,13 @@ const changePic = (target) => {
 
 
     if (target === 'next') {
-        currentIndex ++;
+        currentIndex++;
 
         //se l'index supera la lunghezza massima delle cards lo riporto a 0
         if (currentIndex === cards.length) currentIndex = 0;
     }
     else if (target === 'prev') {
-        currentIndex --;
+        currentIndex--;
 
         //se l'index supera la lunghezza minima delle cards lo riporto all'ultima card
         if (currentIndex < 0) currentIndex = cards.length - 1;
@@ -91,22 +91,48 @@ const changePic = (target) => {
     thumbs[currentIndex].classList.add('active');
 }
 
+// Funzione dell'autoplay
+const startAndStop = () => {
+    isStarted = !isStarted;
+
+    // Fermo l'autoplay e automaticamente cambia in play
+    if (!isStarted) {
+        play.classList.remove('d-none');
+        pause.classList.add('d-none');
+
+        clearInterval(motion);
+    }
+    // oppure riparte l'autoplay e cambia in play 
+    else {
+        play.classList.add('d-none');
+        pause.classList.remove('d-none');
+
+        motion = setInterval(() => {
+            changePic('next');
+        }, 3000);
+    }
+}
 
 // Funzione di stop autoplay se cliccati i bottoni di next, prev o un thumb
 const stopMotion = () => {
-    //giro il flag
     isStarted = !isStarted;
 
     //si ferma l'autoplay
     clearInterval(motion);
+
+    // il button autoplay a play
+    play.clearList.add('d-none');
+    pause.clearList.remove('d-none');
 }
 
 
 //recupero elementi dal DOM
 const gallery = document.getElementById('gallery');
-const thumbsGallery = document.getElementById('thumbnails');
 const next = document.getElementById('next');
 const prev = document.getElementById('prev');
+const play = document.getElementById('play');
+const pause = document.getElementById('pause');
+const thumbsGallery = document.getElementById('thumbnails');
 
 //butto in pagina il set di cards e di thumbs con la funzione creata
 gallery.innerHTML = createCards(data);
@@ -159,8 +185,17 @@ thumbs.forEach((thumb, i) => {
         //fermo l'autoplay
         stopMotion();
     });
-})
+});
 
+// Al click si ferma l'autoplay
+pause.addEventListener('click', () => {
+    startAndStop();
+});
+
+//Al click riparte l'autoplay
+play.addEventListener('click', () => {
+    startAndStop();
+});
 
 
 
